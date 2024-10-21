@@ -1,0 +1,127 @@
+from tkinter import *
+from PIL import ImageTk, Image
+
+class Radio:
+    def __init__(self, volume, frequency):
+        self._volume = volume
+        self._frequency = frequency
+        self._mode = "FM"  # Default mode
+
+    def VolumeUp(self):
+        if self._volume < 10:
+            self._volume += 1
+
+    def VolumeDown(self):
+        if self._volume > 0:
+            self._volume -= 1
+
+    def FrequencyUp(self):
+        if self._mode == "FM" and self._frequency < 108.0:
+            self._frequency += 0.1
+        elif self._mode == "AM" and self._frequency < 1700:
+            self._frequency += 10
+        elif self._mode == "XM" and self._frequency < 233:
+            self._frequency += 1
+
+    def FrequencyDown(self):
+        if self._mode == "FM" and self._frequency > 88.0:
+            self._frequency -= 0.1
+        elif self._mode == "AM" and self._frequency > 530:
+            self._frequency -= 10
+        elif self._mode == "XM" and self._frequency > 1:
+            self._frequency -= 1
+
+    def set_mode(self, mode):
+        if mode in ["FM", "AM", "XM"]:
+            self._mode = mode
+            # Reset frequency based on mode
+            if mode == "FM":
+                self._frequency = 101.5
+            elif mode == "AM":
+                self._frequency = 1000
+            elif mode == "XM":
+                self._frequency = 100
+
+    def __str__(self):
+        return f"Mode: {self._mode}\nVolume: {self._volume}\nFrequency: {round(self._frequency, 1)}"
+
+
+# Functions to switch modes
+def switch_to_fm(myRadio):
+    myRadio.set_mode("FM")
+    displaylabel.config(text=str(myRadio))  # Explicitly convert to string
+
+def switch_to_am(myRadio):
+    myRadio.set_mode("AM")
+    displaylabel.config(text=str(myRadio))  # Explicitly convert to string
+
+def switch_to_xm(myRadio):
+    myRadio.set_mode("XM")
+    displaylabel.config(text=str(myRadio))  # Explicitly convert to string
+
+def volume_up(myRadio):
+    myRadio.VolumeUp()
+    displaylabel.config(text=str(myRadio))  # Explicitly convert to string
+
+def volume_down(myRadio):
+    myRadio.VolumeDown()
+    displaylabel.config(text=str(myRadio))  # Explicitly convert to string
+
+def frequency_up(myRadio):
+    myRadio.FrequencyUp()
+    displaylabel.config(text=str(myRadio))  # Explicitly convert to string
+
+def frequency_down(myRadio):
+    myRadio.FrequencyDown()
+    displaylabel.config(text=str(myRadio))  # Explicitly convert to string
+
+
+# Main program
+try:
+    myRadio = Radio(5, 101.5)
+except Exception as e:
+    print(e)
+
+root = Tk()  
+canvas = Canvas(root, width=616, height=600)  
+canvas.pack()
+
+radioimage = "C:\\Users\\jjwcl\\Documents\\CWCT\\PYTHON\\PCAP\\WEEK 7\\radio.png"
+img = ImageTk.PhotoImage(Image.open(radioimage))  
+canvas.create_image(0, 0, anchor=NW, image=img)
+
+try: 
+    displaylabel = Label(canvas, text=str(myRadio), background="black", foreground="lightgreen", font=("Helvetica", 24))
+except:
+    displaylabel = Label(canvas, text="Radio class missing", background="black", foreground="lightgreen", font=("Helvetica", 24))
+displaylabel.place(x=106, y=214, width=406, height=178)
+
+# Volume controls
+volumelabel = Label(canvas, text="Volume", font=("Helvetica", 18))
+volumelabel.place(x=125, y=480)
+volupbtn = Button(root, text="Up", font=("Helvetica", 14), command=lambda:volume_up(myRadio))
+volupbtn.place(x=80, y=478)
+voldownbtn = Button(root, text="Down", font=("Helvetica", 14), command=lambda:volume_down(myRadio))
+voldownbtn.place(x=215, y=478)
+
+# Tuning controls
+tunelabel = Label(canvas, text="Tune", font=("Helvetica", 18))
+tunelabel.place(x=400, y=480)
+tuneupbtn = Button(root, text="Up", font=("Helvetica", 14), command=lambda:frequency_up(myRadio))
+tuneupbtn.place(x=350, y=478)
+tundownbtn = Button(root, text="Down", font=("Helvetica", 14), command=lambda:frequency_down(myRadio))
+tundownbtn.place(x=465, y=478)
+
+# Mode buttons
+mode_fm_btn = Button(root, text="FM", font=("Helvetica", 14), command=lambda:switch_to_fm(myRadio))
+mode_fm_btn.place(x=80, y=520)
+mode_am_btn = Button(root, text="AM", font=("Helvetica", 14), command=lambda:switch_to_am(myRadio))
+mode_am_btn.place(x=180, y=520)
+mode_xm_btn = Button(root, text="XM", font=("Helvetica", 14), command=lambda:switch_to_xm(myRadio))
+mode_xm_btn.place(x=280, y=520)
+
+# Close button
+closebtn = Button(root, text="Close", font=("Helvetica", 14), command=root.destroy)
+closebtn.place(x=280, y=550)
+
+root.mainloop()
